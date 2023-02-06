@@ -1,6 +1,13 @@
 const express = require('express');
 const app = express();
+app.use(express.json());
+
 const PORT = 3001;
+
+ 
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+})
 
 
 let persons = [
@@ -25,6 +32,7 @@ let persons = [
     "number": "39-23-6423122"
   }
 ]
+
 
 app.get('/info', (request, response) => {
   const info = `Phonebook has info for ${persons.length} people<br>${new Date()}`;
@@ -58,7 +66,29 @@ app.delete('/api/persons/:id', (request, response) => {
   response.status(204).end();
 })
 
+const generateId = () => {
+  let id = Math.floor(Math.random() * (900) + 100);
+  while (persons.find(p => p.id === id)) {
+    id = Math.floor(Math.random() * (900) + 100);
+  }
+  return id;
+}
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.post('/api/persons', (request, response) => {
+  const body = request.body;
+
+  const id = generateId();
+  
+  const person = {
+    id: id,
+    name: body.name,
+    number: body.number
+  }
+  
+  persons = persons.concat(person);
+
+  response.json(person);
+
 })
+
+
