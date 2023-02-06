@@ -26,13 +26,28 @@ const persons = [
   }
 ]
 
+app.get('/info', (request, response) => {
+  const info = `Phonebook has info for ${persons.length} people<br>${new Date()}`;
+  response.send(info);
+})
+
 app.get('/api/persons', (request, response) => {
   response.send(persons);
 })
 
-app.get('/info', (request, response) => {
-  const info = `Phonebook has info for ${persons.length} people<br>${new Date()}`;
-  response.send(info);
+app.get('/api/persons/:id', (request, response) => {
+  const id = Number(request.params.id);
+
+  const person = persons.find(p => p.id === id);
+
+  console.log(person);
+
+  if (person) {
+    response.json(person);
+  } else {
+    response.status(404).end();
+  }
+   
 })
 
 
