@@ -74,10 +74,24 @@ const generateId = () => {
   return id;
 }
 
+const handleError = ({ name, number }) => {
+  if (!name) return { error: 'no name received' };
+  if (!number) return { error: 'no number received' };
+  if (persons.find(p => p.name === name)) return {
+    error: 'name must be unique'
+  }
+  return null;
+}
+
 app.post('/api/persons', (request, response) => {
   const body = request.body;
 
-  const id = generateId();
+  let error = handleError(body);
+
+  if (error) {
+      response.status(400).send(error)
+  } else {
+    const id = generateId();
   
   const person = {
     id: id,
@@ -88,6 +102,7 @@ app.post('/api/persons', (request, response) => {
   persons = persons.concat(person);
 
   response.json(person);
+  }
 
 })
 
