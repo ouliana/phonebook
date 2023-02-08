@@ -5,15 +5,26 @@ const cors = require('cors');
 const app = express();
 app.use(express.json());
 
+app.use(
+  morgan('tiny', {
+    skip: (request, response) => request.method === 'POST',
+  })
+);
+
 morgan.token('body', (request, response) => JSON.stringify(request.body));
 
 app.use(
-  morgan(':method :url :status :res[content-length] - :response-time ms :body')
+  morgan(
+    ':method :url :status :res[content-length] - :response-time ms :body',
+    {
+      skip: (request, response) => request.method !== 'POST',
+    }
+  )
 );
 
 app.use(cors());
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
@@ -69,7 +80,6 @@ app.get('/api/persons/:id', (request, response) => {
 
 app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id);
-
   persons = persons.filter(p => p.id !== id);
 
   response.status(204).end();
