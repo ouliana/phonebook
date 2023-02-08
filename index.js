@@ -23,6 +23,7 @@ app.use(
 );
 
 app.use(cors());
+app.use(express.static('build'));
 
 const PORT = process.env.PORT || 3001;
 
